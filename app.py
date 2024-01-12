@@ -1,7 +1,7 @@
 import streamlit as st
 from fastai.vision.all import *
 import plotly.express as px
-import pathlib import Path
+from pathlib import Path
 import platform
 
 # plt = platform.system()
