@@ -7,10 +7,11 @@ import platform
 
 # Platform-specific adjustments
 if platform.system() == 'Linux':
-    Path = pathlib.PosixPath
+    path_converter = pathlib.PosixPath
+else:
+    path_converter = pathlib.WindowsPath
 
-# plt = platform.system()
-# if plt =='Linux': pathlib.WindowsPath = pathlib.PosixPath
+
 
 # Title
 st.title('Transport classification model')
