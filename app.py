@@ -5,12 +5,14 @@ from pathlib import Path
 import pathlib
 import platform
 
-# Platform-specific adjustments
-if platform.system() == 'Linux':
-    path_converter = pathlib.PosixPath
-else:
-    path_converter = pathlib.WindowsPath
-
+# # Platform-specific adjustments
+# if platform.system() == 'Linux':
+#     path_converter = pathlib.PosixPath
+# else:
+#     path_converter = pathlib.WindowsPath
+import pathlib
+plt = platform.system()
+if plt == 'Linux': pathlib.WindowsPath = pathlib.PosixPath
 
 
 # Title
