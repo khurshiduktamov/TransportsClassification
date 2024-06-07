@@ -1,16 +1,9 @@
 import streamlit as st
 from fastai.vision.all import *
 import plotly.express as px
-from pathlib import Path
-import pathlib
-import platform
-
-# Platform-specific adjustments
-plt = platform.system()
-pathlib.WindowsPath = pathlib.PosixPath
 
 # Set the page title
-st.set_page_config(page_title="AQI Predictions")
+st.set_page_config(page_title="Transport Classification Model")
 
 # Title
 st.title('Transport Classification Model')
@@ -31,18 +24,23 @@ if file:
     model = load_learner('transport_model.pkl')
 
     # Prediction
-    pred, pred_id, probs = model.predict(img)
+    pred, pred_idx, probs = model.predict(img)
 
     # Expected classes
     expected_classes = ['car', 'boat', 'airplane']
 
-    # Showing the results
-    if pred in expected_classes:
-        st.success(f'Prediction: {pred}')
-        st.info(f'Probability: {probs[pred_id]*100:.2f}%')
+    # Check if the highest probability exceeds the threshold
+    if max(probs) >= 0.7:
+        # Check if the predicted class is one of the expected classes
+        if model.dls.vocab[pred_idx] in expected_classes:
+            # Showing the results
+            st.success(f'Prediction: {pred}')
+            st.info(f'Probability: {probs[pred_idx]*100:.2f}%')
 
-        # Visualisation
-        fig = px.bar(x=probs*100, y=model.dls.vocab, labels={'x':'Probability (%)', 'y':'Class'})
-        st.plotly_chart(fig)
+            # Visualisation
+            fig = px.bar(x=probs*100, y=model.dls.vocab, labels={'x':'Probability (%)', 'y':'Class'})
+            st.plotly_chart(fig)
+        else:
+            st.error('The uploaded image does not seem to be a car, boat, or airplane.')
     else:
-        st.error('The uploaded image is not a car, boat, or airplane.')
+        st.error('The model is not confident enough to make a prediction.')
