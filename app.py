@@ -5,18 +5,17 @@ from pathlib import Path
 import pathlib
 import platform
 
-# # Platform-specific adjustments
-# if platform.system() == 'Linux':
-#     path_converter = pathlib.PosixPath
-# else:
-#     path_converter = pathlib.WindowsPath
-import pathlib
+# Platform-specific adjustments
 plt = platform.system()
 pathlib.WindowsPath = pathlib.PosixPath
 
+# Set the page title
+st.set_page_config(page_title="AQI Predictions")
 
 # Title
-st.title('Transport classification model')
+st.title('Transport Classification Model')
+
+st.write("It works only with Cars, Airplanes, and Boats for now")
 
 # Uploading a pic
 file = st.file_uploader('Upload a photo', type=['jpg', 'jpeg', 'png', 'gif', 'svg'])
@@ -34,10 +33,16 @@ if file:
     # Prediction
     pred, pred_id, probs = model.predict(img)
 
-    # Showing the results
-    st.success(f'Prediction: {pred}')
-    st.info(f'Probability: {probs[pred_id]*100:.2f}%')
+    # Expected classes
+    expected_classes = ['car', 'boat', 'airplane']
 
-    # Visualisation
-    fig = px.bar(x=probs*100, y=model.dls.vocab)
-    st.plotly_chart(fig)
+    # Showing the results
+    if pred in expected_classes:
+        st.success(f'Prediction: {pred}')
+        st.info(f'Probability: {probs[pred_id]*100:.2f}%')
+
+        # Visualisation
+        fig = px.bar(x=probs*100, y=model.dls.vocab, labels={'x':'Probability (%)', 'y':'Class'})
+        st.plotly_chart(fig)
+    else:
+        st.error('The uploaded image is not a car, boat, or airplane.')
